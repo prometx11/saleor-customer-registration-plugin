@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='custom-customer-registration',
-    version='0.1',
+    version='0.1.1',
     description='Saleor plugin for customer registration with address.',    
     # long_description='Saleor plugin for customer registration with address.',
     # url='https://github.com/',
