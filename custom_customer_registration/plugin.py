@@ -1,3 +1,4 @@
+from typing import Any
 from saleor.plugins.base_plugin import BasePlugin, ConfigurationTypeField
 
 class CustomCustomerRegistration(BasePlugin):
@@ -5,6 +6,6 @@ class CustomCustomerRegistration(BasePlugin):
     PLUGIN_NAME = "Custom Customer Registration"  # display name of plugin
     PLUGIN_DESCRIPTION = "Enables customer registration with address."
     
-    def customer_updated(self, customer: "User"):
+    def customer_updated(self, customer: "User", previous_value: Any) -> Any:
         print("CustomCustomerRegistration customer_updated hook invoked...",customer)
         
