@@ -8,4 +8,7 @@ class CustomCustomerRegistration(BasePlugin):
     
     def customer_updated(self, customer: "User", previous_value: Any) -> Any:
         print("CustomCustomerRegistration customer_updated hook invoked...",customer)
+        customer.first_name = "test132"
+        update_fields = ["first_name"]
+        customer.save(update_fields=update_fields)
         
