@@ -14,7 +14,13 @@ class CustomCustomerRegistration(BasePlugin):
         # customer.save(update_fields=update_fields)
         
         addr = Address()
-        addr.first_name = "test123"
-        addr.user_addresses.add(customer)
+        addr.first_name = "firstname"
+        addr.last_name= "lastname"
+        addr.street_address_1 = "test street"
+        addr.city = "test city"
+        addr.country = "AT"
+        addr.save()
         
+        addr.user_addresses.add(customer)
+        customer.addresses.add(addr)
         
