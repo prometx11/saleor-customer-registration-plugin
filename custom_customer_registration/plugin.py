@@ -14,17 +14,32 @@ class CustomCustomerRegistration(BasePlugin):
         # customer.save(update_fields=update_fields)
         if(customer.is_active): 
             print("customer activate")
-            if("billing_address" in customer.metadata):
-                print("customer has billing address metadata")                      
+            if("address" in customer.metadata):
+                print("customer has billing address in metadata")
                 addr = Address()
-                addr.first_name = "firstname"
-                addr.last_name= "lastname"
-                addr.street_address_1 = "test street"
-                addr.city = "test city"
-                addr.postal_code = "1223"
-                addr.country = "AT"
+                addr.first_name = customer.metadata["firstName"]
+                addr.last_name=  customer.metadata["lastName"]
+                addr.street_address_1 = customer.metadata["street"]
+                addr.city =customer.metadata["city"]
+                addr.postal_code = customer.metadata["postalCode"]
+                addr.country = customer.metadata["country"]
                 addr.save()
-                
                 addr.user_addresses.add(customer)
                 customer.addresses.add(addr)
+                customer.default_shipping_address = addr
+                customer.default_billing_address = addr
+            if("shipping_address" in customer.metadata):
+                print("customer has extra shipping address metadata")                      
+                sAddr = Address()
+                sAddr.first_name = customer.metadata["shipping_firstName"]
+                sAddr.last_name=  customer.metadata["shipping_lastName"]
+                sAddr.street_address_1 = customer.metadata["shipping_street"]
+                sAddr.city =customer.metadata["shipping_city"]
+                sAddr.postal_code = customer.metadata["shipping_postalCode"]
+                sAddr.country = customer.metadata["shipping_country"]
+                sAddr.save()
+                
+                customer.default_shipping_address = sAddr
+                sAddr.user_addresses.add(customer)
+                customer.addresses.add(sAddr)
         
