@@ -13,7 +13,7 @@ class CustomCustomerRegistration(BasePlugin):
         # update_fields = ["first_name"]
         # customer.save(update_fields=update_fields)
         if(customer.is_active): 
-            print("customer activate with metadata type", type(customer.metadata))
+            print("customer active with metadata type", type(customer.metadata))
             print("address in metadata?", "address" in customer.metadata)
             if("address" in customer.metadata):
                 print("customer has billing address in metadata")
