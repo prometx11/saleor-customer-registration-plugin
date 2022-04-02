@@ -28,9 +28,20 @@ class CustomCustomerRegistration(BasePlugin):
                 addr.postal_code = customer.metadata["postalCode"]
                 addr.country = customer.metadata["country"]
                 addr.save()
+                
                 print("storing billing address...")
                 manager = get_plugins_manager()
                 store_user_address(customer, addr, AddressType.BILLING, manager)  
+                
+                print("deleting billing address metadata...")
+                del customer.metadata["address"]
+                del customer.metadata["firstName"]
+                del customer.metadata["lastName"]
+                del customer.metadata["street"]
+                del customer.metadata["city"]
+                del customer.metadata["postalCode"]
+                del customer.metadata["country"]
+                customer.save(update_fields=["metadata", "updated_at"])
                 
             if("shipping_address" in customer.metadata):
                 print("customer has extra shipping address metadata")                      
@@ -41,8 +52,19 @@ class CustomCustomerRegistration(BasePlugin):
                 sAddr.city =customer.metadata["shipping_city"]
                 sAddr.postal_code = customer.metadata["shipping_postalCode"]
                 sAddr.country = customer.metadata["shipping_country"]
-                sAddr.save()               
+                sAddr.save()       
+                        
                 print("storing shipping address...")
                 manager = get_plugins_manager()
                 store_user_address(customer, sAddr, AddressType.SHIPPING, manager)  
+                
+                print("deleting shipping address metadata...")
+                del customer.metadata["shipping_address"]
+                del customer.metadata["shipping_firstName"]
+                del customer.metadata["shipping_lastName"]
+                del customer.metadata["shipping_street"]
+                del customer.metadata["shipping_city"]
+                del customer.metadata["shipping_postalCode"]
+                del customer.metadata["shipping_country"]
+                customer.save(update_fields=["metadata", "updated_at"])
         
