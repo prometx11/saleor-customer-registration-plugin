@@ -1,7 +1,9 @@
 from typing import Any
 from saleor.plugins.base_plugin import BasePlugin, ConfigurationTypeField
 from saleor.account.models import Address
-from saleor.account.utils import set_user_default_shipping_address,set_user_default_billing_address
+from saleor.account.utils import store_user_address
+from saleor.plugins.manager import get_plugins_manager 
+from saleor.checkout import AddressType
 
 class CustomCustomerRegistration(BasePlugin):
     PLUGIN_ID = "plugin.customCustomerRegistration"  # plugin identifier
@@ -26,10 +28,10 @@ class CustomCustomerRegistration(BasePlugin):
                 addr.postal_code = customer.metadata["postalCode"]
                 addr.country = customer.metadata["country"]
                 addr.save()
-                addr.user_addresses.add(customer)
-                customer.addresses.add(addr)
-                set_user_default_shipping_address(customer,addr)
-                set_user_default_billing_address(customer,addr)               
+                print("storing billing address...")
+                manager = get_plugins_manager()
+                store_user_address(customer, addr, AddressType.BILLING, manager)  
+                
             if("shipping_address" in customer.metadata):
                 print("customer has extra shipping address metadata")                      
                 sAddr = Address()
@@ -40,8 +42,7 @@ class CustomCustomerRegistration(BasePlugin):
                 sAddr.postal_code = customer.metadata["shipping_postalCode"]
                 sAddr.country = customer.metadata["shipping_country"]
                 sAddr.save()               
-              
-                sAddr.user_addresses.add(customer)
-                customer.addresses.add(sAddr)
-                set_user_default_shipping_address(customer,sAddr)
+                print("storing shipping address...")
+                manager = get_plugins_manager()
+                store_user_address(customer, sAddr, AddressType.SHIPPING, manager)  
         
