@@ -1,6 +1,7 @@
 from typing import Any
 from saleor.plugins.base_plugin import BasePlugin, ConfigurationTypeField
 from saleor.account.models import Address
+from saleor.account.utils import set_user_default_shipping_address,set_user_default_billing_address
 
 class CustomCustomerRegistration(BasePlugin):
     PLUGIN_ID = "plugin.customCustomerRegistration"  # plugin identifier
@@ -27,8 +28,8 @@ class CustomCustomerRegistration(BasePlugin):
                 addr.save()
                 addr.user_addresses.add(customer)
                 customer.addresses.add(addr)
-                customer.default_shipping_address = addr
-                customer.default_billing_address = addr
+                set_user_default_shipping_address(customer,addr)
+                set_user_default_billing_address(customer,addr)               
             if("shipping_address" in customer.metadata):
                 print("customer has extra shipping address metadata")                      
                 sAddr = Address()
@@ -38,9 +39,9 @@ class CustomCustomerRegistration(BasePlugin):
                 sAddr.city =customer.metadata["shipping_city"]
                 sAddr.postal_code = customer.metadata["shipping_postalCode"]
                 sAddr.country = customer.metadata["shipping_country"]
-                sAddr.save()
-                
-                customer.default_shipping_address = sAddr
+                sAddr.save()               
+              
                 sAddr.user_addresses.add(customer)
                 customer.addresses.add(sAddr)
+                set_user_default_shipping_address(customer,sAddr)
         
