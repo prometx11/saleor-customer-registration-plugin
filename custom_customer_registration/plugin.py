@@ -27,7 +27,7 @@ class CustomCustomerRegistration(BasePlugin):
                 print("storing billing address...")
                 manager = get_plugins_manager()
                 store_user_address(customer, addr, AddressType.BILLING, manager)  
-                
+                store_user_address(customer, addr, AddressType.SHIPPING, manager)  
                 print("deleting billing address metadata...")
                 del customer.metadata["address"]
                 del customer.metadata["firstName"]
