@@ -1,9 +1,12 @@
 from typing import Any
+import logging
 from saleor.plugins.base_plugin import BasePlugin, ConfigurationTypeField
 from saleor.account.models import Address
 from saleor.account.utils import store_user_address
 from saleor.plugins.manager import get_plugins_manager 
 from saleor.checkout import AddressType
+
+logger = logging.getLogger(__name__)
 
 class CustomCustomerRegistration(BasePlugin):
     PLUGIN_ID = "plugin.customCustomerRegistration"  # plugin identifier
@@ -11,10 +14,10 @@ class CustomCustomerRegistration(BasePlugin):
     PLUGIN_DESCRIPTION = "Enables customer registration with address."
     
     def customer_created(self, customer: "User", previous_value: Any) -> Any:
-        print("CustomCustomerRegistration customer_updated hook invoked...",customer.metadata)
+        logger.info("CustomCustomerRegistration customer_updated hook invoked...")
         if customer.metadata:
             if "address" in customer.metadata:
-                print("customer has billing address in metadata")
+                logger.info("customer has billing address in metadata")
                 addr = Address()
                 addr.first_name = customer.metadata["firstName"]
                 addr.last_name=  customer.metadata["lastName"]
@@ -22,13 +25,14 @@ class CustomCustomerRegistration(BasePlugin):
                 addr.city =customer.metadata["city"]
                 addr.postal_code = customer.metadata["postalCode"]
                 addr.country = customer.metadata["country"]
-                addr.save()
-                
-                print("storing billing address...")
+                addr.save()                
+             
                 manager = get_plugins_manager()
-                store_user_address(customer, addr, AddressType.BILLING, manager)  
+                logger.info("storing billing address...")
+                store_user_address(customer, addr, AddressType.BILLING, manager)
+                logger.info("storing same address as shipping address...")  
                 store_user_address(customer, addr, AddressType.SHIPPING, manager)  
-                print("deleting billing address metadata...")
+                logger.info("deleting billing address metadata...")
                 del customer.metadata["address"]
                 del customer.metadata["firstName"]
                 del customer.metadata["lastName"]
@@ -39,7 +43,7 @@ class CustomCustomerRegistration(BasePlugin):
                 customer.save(update_fields=["metadata", "updated_at"])
                 
             if "shipping_address" in customer.metadata: 
-                print("customer has extra shipping address metadata")                      
+                logger.info("customer has extra shipping address metadata")                      
                 sAddr = Address()
                 sAddr.first_name = customer.metadata["shipping_firstName"]
                 sAddr.last_name=  customer.metadata["shipping_lastName"]
@@ -49,11 +53,11 @@ class CustomCustomerRegistration(BasePlugin):
                 sAddr.country = customer.metadata["shipping_country"]
                 sAddr.save()       
                         
-                print("storing shipping address...")
+                logger.info("storing shipping address...")
                 manager = get_plugins_manager()
                 store_user_address(customer, sAddr, AddressType.SHIPPING, manager)  
                 
-                print("deleting shipping address metadata...")
+                logger.info("deleting shipping address metadata...")
                 del customer.metadata["shipping_address"]
                 del customer.metadata["shipping_firstName"]
                 del customer.metadata["shipping_lastName"]
